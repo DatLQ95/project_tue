@@ -28,7 +28,7 @@ using namespace omnetpp;
 class Interface: public cSimpleModule
 {
 private:
-    double probToSend;
+    // double probToSend;
     simtime_t slot;
     long studiedSlots;
     int Nodes;
@@ -42,7 +42,7 @@ private:
 
     int arrivals;
     simtime_t time_latency;
-    simtime_t latency;
+    simtime_t latency[10];
 
     int current_tx;
     //int previous_tx;
@@ -90,13 +90,17 @@ void Interface::initialize()
 
     scheduleAt(simTime()+100*slot,local_pkt); //100*slot
 
-    probToSend                = par("load");
+    // probToSend                = par("load");
     Nodes                     = par("Nodes");
     //Buf_count              = par("Buf_count");
 
 
     arrivals = 0;
     time_latency = 0;
+
+    for (int i = 0; i < 10; i++){
+        latency[i] = 0;
+    }
 
     studiedSlots=0;
     WATCH(studiedSlots);
@@ -118,14 +122,14 @@ void Interface::handleMessage(cMessage *msg)
 
        if(dst_inter == src){
             bubble("Packet received");
-            //int application_index = temp_msg -> getApplication_index();
+            int application_index = temp_msg -> getApplication_index();
             time_latency = simTime() - temp_msg->getEnd2EndStartTime();
 
             //latJitter.collect(time_latency);
             //latCDF.collect(time_latency);
             //lat_rec.record(time_latency);
 
-            latency = latency + time_latency;
+            latency[application_index] = latency[application_index] + time_latency;
             time_latency = 0;
             arrivals++;
             delete(msg);
@@ -207,7 +211,10 @@ void Interface::finish()
 
 
     recordScalar("#Messages arrived1", arrivals);
-    recordScalar("#Messages latency1", latency);
+    for (int i =0; i < 10; i++){
+        recordScalar("#Messages latency", latency[i]);
+    }
+    
 
     recordScalar("#Messages Err", pktErr);
     //recordScalar("#Slot studied", studiedSlots);

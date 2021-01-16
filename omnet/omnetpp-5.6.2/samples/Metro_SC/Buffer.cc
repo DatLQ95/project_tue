@@ -31,6 +31,7 @@ class Buffer : public cSimpleModule
         //int Buf25_count;
 
         bool delete_flag;
+        int source_number;
 
         simtime_t Rec_time;
         simtime_t slot;
@@ -76,7 +77,7 @@ void Buffer::initialize()
     Rxcount                   = par("Rxcount");
 
     //Buf400_count              = par("Tx400count");
-    Buf_count               = par("Txcount");
+    source_number               = par("source_number");
 
     Rec_time = 4e-7;
     slot                      = par("slot");
@@ -265,7 +266,7 @@ void Buffer::handleMessage(cMessage *msg)
                 int l = 3 ; //bufferLength[0];
                 int pkt_sent_this_loop = 0;
 
-                for(int t=0;t<Txcount;t++){
+                for(int t=0;t<source_number;t++){
                     if(bufferLength[t] > 0 ) {
                         if ((node_occupied_channel[bufferDst[t][bufferLength[t]-1]] < Rxcount) && (bufferLength[t] > l )) {
                              d=t; l = bufferLength[t];

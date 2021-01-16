@@ -8,8 +8,9 @@ simple Source
         int Nodes;//= default(8);
         int Channel;
         int message_count;
-        int Txcount;
-
+        int source_number;
+        int node_dst;
+        int application_index;
         double slot;
 
     gates:
@@ -21,7 +22,7 @@ simple Interface
 {
     parameters:
         @display("i=block/source");
-        double load;//= default(0.5);
+        // double load;//= default(0.5);
         int Nodes;//= default(8);
         int Channel;
         int Txcount;
@@ -58,10 +59,11 @@ simple Buffer
         double slot;//= default(0.95us);
         int capacity;//= default(30);
         int Channel;
+        int source_number;
 
         int Nodes;
     gates:
-        input source_in[Txcount];
+        input source_in[source_number];
         input SC_in;
         output SC_out;
         output out[Channel];
@@ -88,8 +90,9 @@ network Metro_SC
     parameters:
         int Nodes;
         int Channel;
-        double load;
+        // double load;
         int Txcount; //traffic amount
+        int source_number;
 
         @display("i=block/network;bgb=878,823;bgi=background/streetmap,s");
 
@@ -108,7 +111,7 @@ network Metro_SC
         combiner[Nodes]: Combiner {
             @display("p=613.634,615.28796,i,200;i=abstract/cache");
         }
-        source[Nodes*Txcount]: Source {
+        source[Nodes*source_number]: Source {
         //source[Nodes*20]: Source {
             @display("p=325.83798,291.10397");
         }
@@ -119,9 +122,9 @@ network Metro_SC
             //Interface[i].buffer_out[j] --> buffer[i].Interface_in[j];
         //}
 
-        for i=0..Nodes-1, for j=0..Txcount-1 {
+        for i=0..Nodes-1, for j=0..source_number-1 {
             //Interface[i].source_out[j] --> source[i].in;
-           source[j + i*Txcount].out --> buffer[i].source_in[j];
+           source[j + i*source_number].out --> buffer[i].source_in[j];
         }
 
         for i=0..Nodes-1 {

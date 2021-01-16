@@ -14,12 +14,16 @@ private:
     long studiedSlots;
     long message_count;
     int Nodes;
+    
+    int node_dst;
+    int application_index;
 
     long pktSent;
     long pktSent_1;
     long pktSent_2;
     int msg_count;
-    int Txcount;
+    int source_number;
+    // int Txcount;
 
     int sum;
 
@@ -57,12 +61,15 @@ Source::~Source(){
 
 void Source::initialize()
 {
+    node_dst = par("node_dst");
+
+    application_index = par("application_index");
 
     slot = par("slot");
 
     message_count = par("message_count");
 
-    Txcount = par("Txcount");
+    source_number = par("source_number");
 
     msg_count = 0;
     sum = 0;
@@ -94,35 +101,38 @@ void Source::handleMessage(cMessage *msg)
     MyPacket *temp_msg = check_and_cast<MyPacket *>(msg);
     int src = getIndex();
 
-    this_node = getIndex()/Txcount;
+    this_node = getIndex()/source_number;
 
     if(temp_msg->getIndex()==0){
 
-    if (msg_count<message_count){
+    if (SIMTIME_DBL(simTime()) < 0.05){
 
-        if(uniform(0,1) < load){
+        if (application_index > 0){
 
-                MyPacket *pkt = new MyPacket();
-                int inter_dst = dest_gen(Nodes,this_node);
+            if(uniform(0,10) < load){
 
-                pkt->setBitLength(100000);
-                pkt->setIndex(1);
-                pkt->setSource(this_node);
-                pkt->setDst_inter(inter_dst);
-                pkt->setEnd2EndStartTime(SIMTIME_DBL(simTime()));
-                //pkt->setPri_latency(pri_latency);
-                //pkt->setPri_realiablity(pri_realiablity);
-                //pkt->setApplication_index(application_index);
+                    MyPacket *pkt = new MyPacket();
+                    int inter_dst = node_dst;
+                    pkt->setApplication_index(application_index);
+                    pkt->setBitLength(100000);
+                    pkt->setIndex(1);
+                    pkt->setSource(this_node);
+                    pkt->setDst_inter(inter_dst);
+                    pkt->setEnd2EndStartTime(SIMTIME_DBL(simTime()));
+                    //pkt->setPri_latency(pri_latency);
+                    //pkt->setPri_realiablity(pri_realiablity);
+                    //pkt->setApplication_index(application_index);
 
-                send(pkt, "out");
-                EV<<"Sending a packet";
-                bubble("Sending a packet");
+                    send(pkt, "out");
+                    EV<<"Sending a packet";
+                    bubble("Sending a packet");
 
-                pktSent++;
-                msg_count++;  //100*slot
-         }
+                    pktSent++;
+                    msg_count++;  //100*slot
+            }
+        }
 
-         scheduleAt(simTime()+slot/4,local_pkt);
+        scheduleAt(simTime()+slot/4,local_pkt);
     }
 
     else{
