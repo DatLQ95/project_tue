@@ -6,6 +6,8 @@
 using namespace omnetpp;
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
+#define APPLICATION_NUMBER 10
+
 class Buffer : public cSimpleModule
 {
     private:
@@ -30,6 +32,8 @@ class Buffer : public cSimpleModule
         int Buf_count;
         //int Buf25_count;
 
+        int application_number;
+
         bool delete_flag;
         int source_number;
 
@@ -38,7 +42,7 @@ class Buffer : public cSimpleModule
 
         int initial_msg_count;
         int Channel;
-        int lost;
+        int lost[APPLICATION_NUMBER];
 
         int capacity;
         int pktSent;
@@ -85,6 +89,8 @@ void Buffer::initialize()
     Nodes                     = par("Nodes");
     capacity                  = par("capacity");
 
+    application_number = par("application_number");
+
     delete_flag = false;
 
     for(int i=0;i<100;i++){
@@ -113,8 +119,10 @@ void Buffer::initialize()
     //while(buffer400_e.length()>0){
     //    buffer400_e.pop();
     //}
+    for (int i =0; i < application_number; i ++){
+        lost[i]=0;
+    }
 
-    lost=0;
     WATCH(lost);
 
     pktSent=0;
@@ -172,7 +180,7 @@ void Buffer::handleMessage(cMessage *msg)
 
                     delete msg;
                     bubble("Packet lost");
-                    lost++;
+                    lost[temp_msg -> getApplication_index()]++;
 
             }
             else
@@ -314,7 +322,10 @@ void Buffer::handleMessage(cMessage *msg)
 void Buffer::finish()
 {
     recordScalar("#Messages sentFbuffer", pktSent);
-    recordScalar("pack loss", lost);
+    for (int i; i < application_number; i ++)
+    {
+        recordScalar("pack loss", lost[i]);
+    }
 }
 
 

@@ -25,6 +25,8 @@
 
 using namespace omnetpp;
 
+#define APPLICATION_NUMBER 10
+
 class Interface: public cSimpleModule
 {
 private:
@@ -39,10 +41,11 @@ private:
     long pktErr;
 
     int msg_count;
+    int application_number;
 
-    int arrivals;
+    int arrivals[APPLICATION_NUMBER];
     simtime_t time_latency;
-    simtime_t latency[10];
+    simtime_t latency[APPLICATION_NUMBER];
 
     int current_tx;
     //int previous_tx;
@@ -93,13 +96,13 @@ void Interface::initialize()
     // probToSend                = par("load");
     Nodes                     = par("Nodes");
     //Buf_count              = par("Buf_count");
+    application_number = par("application_number");
 
-
-    arrivals = 0;
     time_latency = 0;
 
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < application_number; i++){
         latency[i] = 0;
+        arrivals[i] = 0;
     }
 
     studiedSlots=0;
@@ -129,9 +132,9 @@ void Interface::handleMessage(cMessage *msg)
             //latCDF.collect(time_latency);
             //lat_rec.record(time_latency);
 
-            latency[application_index] = latency[application_index] + time_latency;
+            latency[application_index - 1] = latency[application_index -1] + time_latency;
             time_latency = 0;
-            arrivals++;
+            arrivals[application_index -1]++;
             delete(msg);
 
         }
@@ -210,9 +213,10 @@ void Interface::finish()
     //latCDF.saveToFile("1.csv");
 
 
-    recordScalar("#Messages arrived1", arrivals);
-    for (int i =0; i < 10; i++){
+    
+    for (int i =0; i < application_number; i++){
         recordScalar("#Messages latency", latency[i]);
+        recordScalar("#Messages arrived", arrivals[i]);
     }
     
 

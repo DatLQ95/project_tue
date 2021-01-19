@@ -7,7 +7,7 @@ simple Source
         double load;//= default(0.5);       
         int Nodes;//= default(8);
         int Channel;
-        int message_count;
+        // int message_count;
         int source_number;
         int node_dst;
         int application_index;
@@ -26,6 +26,7 @@ simple Interface
         int Nodes;//= default(8);
         int Channel;
         int Txcount;
+        int application_number;
 
     gates:
         //output buffer_out[Txcount];
@@ -60,7 +61,7 @@ simple Buffer
         int capacity;//= default(30);
         int Channel;
         int source_number;
-
+        int application_number;
         int Nodes;
     gates:
         input source_in[source_number];

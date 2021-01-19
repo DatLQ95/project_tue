@@ -12,7 +12,7 @@ private:
     double load;
     simtime_t slot;
     long studiedSlots;
-    long message_count;
+    // long message_count;
     int Nodes;
     
     int node_dst;
@@ -67,7 +67,7 @@ void Source::initialize()
 
     slot = par("slot");
 
-    message_count = par("message_count");
+    // message_count = par("message_count");
 
     source_number = par("source_number");
 
@@ -105,11 +105,11 @@ void Source::handleMessage(cMessage *msg)
 
     if(temp_msg->getIndex()==0){
 
-    if (SIMTIME_DBL(simTime()) < 0.05){
+    if (SIMTIME_DBL(simTime()) < 0.5){
 
         if (application_index > 0){
 
-            if(uniform(0,10) < load){
+            if(uniform(0,1) < load){
 
                     MyPacket *pkt = new MyPacket();
                     int inter_dst = node_dst;
