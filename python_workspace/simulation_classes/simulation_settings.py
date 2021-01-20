@@ -28,7 +28,6 @@ webserver_cpu_demand = 2
 webserver_memory_demand = 4
 webserver_storage_demand = 30
 user_number = 4
-priority = 1
 
 class webserver_setting():
     def get_webserver_pattern():
@@ -49,8 +48,8 @@ class webserver_setting():
     def get_user_number():
         return user_number
 
-    def get_priority():
-        return priority
+    # def get_priority():
+    #     return priority
     
 #----------------------------------------------------------------------------------------------
 #EdgeComputing:
@@ -121,3 +120,41 @@ class omnet_settings():
 
     def get_csv_file_directory():
         return csv_file_directory
+
+#----------------------------------------------------------------------------------------------
+#uniform application setting:
+uniform_pattern = [0.1,0.09,0.11,0.1,0.099,0.095,0.102,0.106,0.1,0.102,0.095]
+user_uniform_pattern = [ 
+    [0.01,0.01,0.012,0.011,0.0009,0.00099,0.0015,0.0099,0.009,0.008,0.009],
+    [0.012,0.015,0.01,0.013,0.00094,0.00095,0.00095,0.0097,0.009,0.008,0.009],
+    [0.013,0.011,0.015,0.012,0.00095,0.00089,0.015,0.0098,0.009,0.008,0.009],
+    [0.011,0.015,0.0101,0.013,0.00094,0.00091,0.015,0.0097,0.009,0.008,0.009],
+]
+
+uniform_cpu_demand = 1
+uniform_memory_demand = 1
+uniform_storage_demand = 5
+uniform_user_number = 4
+
+class uniform_setting():
+    def get_uniform_pattern():
+        return uniform_pattern
+
+    def get_user_uniform_pattern():
+        return user_uniform_pattern
+    
+    def get_uniform_cpu_demand():
+        return uniform_cpu_demand
+
+    def get_uniform_memory_demand():
+        return uniform_memory_demand
+
+    def get_uniform_storage_demand():
+        return uniform_storage_demand
+
+    def get_uniform_user_number():
+        return uniform_user_number
+
+    # def get_priority():
+    #     return priority
+    

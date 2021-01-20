@@ -6,7 +6,7 @@
 using namespace omnetpp;
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-#define APPLICATION_NUMBER 10
+#define APPLICATION_NUMBER 100
 
 class Buffer : public cSimpleModule
 {
@@ -119,7 +119,7 @@ void Buffer::initialize()
     //while(buffer400_e.length()>0){
     //    buffer400_e.pop();
     //}
-    for (int i =0; i < application_number; i ++){
+    for (int i =0; i < APPLICATION_NUMBER; i ++){
         lost[i]=0;
     }
 
@@ -178,9 +178,10 @@ void Buffer::handleMessage(cMessage *msg)
             if (buffer[buf_index].length()+1>=capacity)
             {
 
-                    delete msg;
-                    bubble("Packet lost");
-                    lost[temp_msg -> getApplication_index()]++;
+                int application_index = temp_msg -> getApplication_index();
+                delete msg;
+                bubble("Packet lost");
+                lost[application_index -1] = lost[application_index -1] + 1;
 
             }
             else

@@ -25,7 +25,7 @@
 
 using namespace omnetpp;
 
-#define APPLICATION_NUMBER 10
+#define APPLICATION_NUMBER 100
 
 class Interface: public cSimpleModule
 {
@@ -100,7 +100,7 @@ void Interface::initialize()
 
     time_latency = 0;
 
-    for (int i = 0; i < application_number; i++){
+    for (int i = 0; i < APPLICATION_NUMBER; i++){
         latency[i] = 0;
         arrivals[i] = 0;
     }

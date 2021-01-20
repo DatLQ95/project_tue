@@ -103,51 +103,52 @@ void Source::handleMessage(cMessage *msg)
 
     this_node = getIndex()/source_number;
 
-    if(temp_msg->getIndex()==0){
+    if (application_index > 0){
 
-    if (SIMTIME_DBL(simTime()) < 0.5){
+        if(temp_msg->getIndex()==0){
 
-        if (application_index > 0){
+            if (SIMTIME_DBL(simTime()) < 0.5){
+                if(uniform(0,1) < load){
 
-            if(uniform(0,1) < load){
+                        MyPacket *pkt = new MyPacket();
+                        int inter_dst = node_dst;
+                        pkt->setApplication_index(application_index);
+                        pkt->setBitLength(100000);
+                        pkt->setIndex(1);
+                        pkt->setSource(this_node);
+                        pkt->setDst_inter(inter_dst);
+                        pkt->setEnd2EndStartTime(SIMTIME_DBL(simTime()));
+                        //pkt->setPri_latency(pri_latency);
+                        //pkt->setPri_realiablity(pri_realiablity);
+                        //pkt->setApplication_index(application_index);
 
-                    MyPacket *pkt = new MyPacket();
-                    int inter_dst = node_dst;
-                    pkt->setApplication_index(application_index);
-                    pkt->setBitLength(100000);
-                    pkt->setIndex(1);
-                    pkt->setSource(this_node);
-                    pkt->setDst_inter(inter_dst);
-                    pkt->setEnd2EndStartTime(SIMTIME_DBL(simTime()));
-                    //pkt->setPri_latency(pri_latency);
-                    //pkt->setPri_realiablity(pri_realiablity);
-                    //pkt->setApplication_index(application_index);
+                        send(pkt, "out");
+                        EV<<"Sending a packet";
+                        bubble("Sending a packet");
 
-                    send(pkt, "out");
-                    EV<<"Sending a packet";
-                    bubble("Sending a packet");
+                        pktSent++;
+                        msg_count++;  //100*slot
+                }
+                scheduleAt(simTime()+slot/4,local_pkt);
+            }
 
-                    pktSent++;
-                    msg_count++;  //100*slot
+            else{
+
+                MyPacket *FinishMsg = new MyPacket();
+                FinishMsg->setIndex(5);   //finish
+                FinishMsg->setApplication_index(1);
+                sendDelayed(FinishMsg,100*slot,"out");
+
+                EV<<"as counter value reaches 10000, send finish msg "<<"\n";
+                if(local_pkt->isScheduled())
+                cancelEvent(local_pkt);
             }
         }
-
-        scheduleAt(simTime()+slot/4,local_pkt);
     }
-
-    else{
-
-         MyPacket *FinishMsg = new MyPacket();
-         FinishMsg->setIndex(5);   //finish
-         FinishMsg->setApplication_index(1);
-         sendDelayed(FinishMsg,100*slot,"out");
-
-         EV<<"as counter value reaches 10000, send finish msg "<<"\n";
-         if(local_pkt->isScheduled())
-         cancelEvent(local_pkt);
-    }
-
-
+    else
+    {
+        if(local_pkt->isScheduled())
+            cancelEvent(local_pkt);
     }
 }
 

@@ -9,7 +9,7 @@ class NetworkFunction():
         self.application_index = application_index
 
     def get_load(self):
-        return self.bandwidth_pattern[self.env.get_time_step()]
+        return round(self.bandwidth_pattern[self.env.get_time_step()], 3)
 
     def get_cpu_demand(self):
         return self.cpu
