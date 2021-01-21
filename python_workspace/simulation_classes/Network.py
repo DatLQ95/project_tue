@@ -37,7 +37,7 @@ class Network():
         return -1
 
     def remove_application(self, application, node_index):
-        self.edge[node_index].remove_application(application)
+        self.edges[node_index].remove_application(application)
         for i in range(application.get_user_number()):
             if(i == node_index):
                 continue
@@ -52,6 +52,9 @@ class Network():
                 if(self.edges[i].is_contain_user(application_index=application.get_application_index())):
                     self.edges[i].update_user_load_value(application, node_index)
                 
-            
+    def remove_empty_user(self):
+        for i in range(environment_network.get_node_number()):
+            self.edges[i].remove_empty_user()
+        pass        
                 
     

@@ -47,15 +47,18 @@ class EdgeComputing():
         self.memory = self.memory + application.get_application_memory_demand()
         self.storage = self.storage + application.get_application_storage_demand()
         self.application_index_list.remove(application.get_application_index())
+        source_list = list()
         for i in self.source:
-            if (i[1] == application.get_application_index()):
-                self.source.remove(i)
+            if (i[1] != application.get_application_index()):
+                source_list.append(i)
+        self.source = source_list
 
     def remove_user(self, application):
+        source_list = list()
         for i in self.source:
-            if (i[1] == application.get_application_index()):
-                self.source.remove(i)
-        pass
+            if (i[1] != application.get_application_index()):
+                source_list.append(i)
+        self.source = source_list
 
     def status(self):
         """
@@ -90,3 +93,10 @@ class EdgeComputing():
                 source_list.append(i)
         self.source = source_list
         self.source.append([application.get_user_load(node_index=self.node_index), application.get_application_index(), application_dst])       
+
+    def remove_empty_user(self):
+        source_list = list()
+        for i in self.source:
+            if (i[1] != 0):
+                source_list.append(i)
+        self.source = source_list

@@ -17,11 +17,10 @@ class Simulation():
         self.add_application(application_index = 1, application_type= 1, priority=2)
         self.add_application(application_index = 2, application_type= 1, priority=4)
         self.add_application(application_index = 3, application_type= 1, priority=7)
-
         pass
 
     def add_application(self, application_index, application_type, priority):
-        if(application_type == 1):
+        if (application_type == 1):
             self.applications.append(Application(application_index=application_index, env= self.env, server_pattern= webserver_setting.get_webserver_pattern(), user_patern=webserver_setting.get_user_server_pattern(), memory_demand=webserver_setting.get_webserver_memory_demand(), cpu_demand=webserver_setting.get_webserver_cpu_demand(), storage_demand=webserver_setting.get_webserver_storage_demand(), user_number= webserver_setting.get_user_number(), priority= priority))
         elif (application_type == 2):
             self.applications.append(Application(application_index=application_index, env= self.env, server_pattern= uniform_setting.get_uniform_pattern(), user_patern=uniform_setting.get_user_uniform_pattern(), memory_demand=uniform_setting.get_uniform_memory_demand(), cpu_demand=uniform_setting.get_uniform_cpu_demand(), storage_demand=uniform_setting.get_uniform_storage_demand(), user_number= uniform_setting.get_uniform_user_number(), priority= priority))
@@ -37,22 +36,25 @@ class Simulation():
 
     def deploy_application(self, action):
         # Compare and see if the application is already deployed or not?
+        self.network.remove_empty_user()
         for i in action.keys():
             if(not self.network.is_application_belongs_to_node(application_index= i, node_index= action.get(i))):
-
-                if(self.network.deploy_application(application= self.get_application(application_index= i), node_index= action.get(i))):
-                    self.application_number = self.application_number + 1
-                else:
-                    # can not deploy the application, due to 
-                    pass
-                #TODO: test this module!
-                #check if application is deployed in other node, then delete it
+                # #TODO: test this module!
+                # #check if application is deployed in other node, then delete it
                 node_deployed = self.network.is_application_belongs_to_other_node(application= self.get_application(application_index= i), node_index= action.get(i))
                 if(node_deployed != -1):
                     self.network.remove_application(application= self.get_application(application_index= i), node_index= node_deployed)
                     self.application_number = self.application_number - 1
                 else:
                     pass
+                # print("**********************************")
+                # self.network.status()
+                if(self.network.deploy_application(application= self.get_application(application_index= i), node_index= action.get(i))):
+                    self.application_number = self.application_number + 1
+                else:
+                    # can not deploy the application, due to 
+                    pass
+                
             else :
                 #already in the node, no need to do anything!
                 # update load value:
@@ -114,7 +116,8 @@ class Simulation():
         return self.report_data
 
 simulation = Simulation()
-action = {1: 1, 2: 1, 3: 1}
+action = [{1:1, 2:3, 3:1}, {1:0, 2:2, 3:1}, {1:1, 2:0, 3:2}]
 for i in range(3):
-    simulation.run(action)
+    print("-------------------------------------------")
+    simulation.run(action[i])
 simulation.get_report()
